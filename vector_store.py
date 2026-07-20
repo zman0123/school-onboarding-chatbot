@@ -1,6 +1,6 @@
 import chromadb
 from sentence_transformers import SentenceTransformer
-from embedding_model import model
+from embedding import model
 
 # -----------------------------
 # 모델 로드

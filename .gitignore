@@ -9,12 +9,11 @@ __pycache__/
 .env
 
 # Database
-*.db
 *.sqlite
 *.sqbpro
 
 # ChromaDB
-chroma_db/
+
 
 # Uploaded Files
 photos/
