@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual Environment
+.venv/
+
+# Environment
+.env
+
+# Database
+*.db
+*.sqlite
+*.sqbpro
+
+# ChromaDB
+chroma_db/
+
+# Uploaded Files
+photos/
+pdfs/
+
+# Excel Data
+*.xlsx
+
+# VSCode
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
