@@ -6,24 +6,14 @@ import streamlit as st
 
 from vector_store import add_document
 
-from image_processor import analyze_image
-
 from pdf_processor import process_pdf
 
 def save_information(
     category,
     sentence,
     image_path=None,
-    pdf_path=None,
-    image_description = None
+    pdf_path=None
 ):
-    add_document(
-        doc_id=f"image_{datetime.now().timestamp()}",
-        sentence=image_description,
-        category=category,
-        source="image",
-        image_path=image_path
-    )
 
     conn = sqlite3.connect("onboarding.db")
     cursor = conn.cursor()
@@ -39,10 +29,11 @@ def save_information(
             created_at,
             source,
             image_path,
-            pdf_path
+            pdf_path,
+            image_description
         )
 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """,
 
     (
@@ -54,36 +45,25 @@ def save_information(
         datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "teacher",
         image_path,
-        pdf_path
+        pdf_path,
+        None          # 사진 설명은 저장하지 않음
     ))
 
     conn.commit()
 
-    # 새로 생성된 id
     doc_id = cursor.lastrowid
 
     conn.close()
 
-    # ChromaDB에도 저장
-    # 텍스트가 있을 때만 ChromaDB 저장
     if sentence.strip():
 
         add_document(
             doc_id=doc_id,
             sentence=sentence,
             category=category,
+            source="teacher",
             image_path=image_path,
             pdf_path=pdf_path
-        )
-    
-    if image_description:
-
-        add_document(
-            doc_id=f"image_{doc_id}",
-            sentence=image_description,
-            category=category,
-            source="image",
-            image_path=image_path
         )
 
 
@@ -172,13 +152,6 @@ def admin_page():
                 with open(image_path, "wb") as f:
                     f.write(image.getbuffer())
 
-            if image_path:
-
-                print("사진 분석 시작")
-
-                image_description = analyze_image(image_path)
-
-                print(image_description)
 
         # ------------------------
         # PDF 저장
@@ -204,9 +177,7 @@ def admin_page():
 
                 image_path=image_path,
 
-                pdf_path=pdf_path,
-
-                image_description=image_description
+                pdf_path=pdf_path
 
             )
         # ------------------------

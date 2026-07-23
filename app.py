@@ -98,47 +98,17 @@ if question:
 
 
         else:
-
-
-
             st.write(", ".join(categories))
-
-
-
         st.subheader("📚 참고한 설문")
-
-
-
+        shown_pdf = set()
         if len(documents) == 0:
-
-
-
             st.write("검색 결과 없음")
-
-
-
         else:
-
-
-
             for i, doc in enumerate(documents, start=1):
-
-
-
                 with st.expander(f"{i}. {doc['category']}"):
-
-
-
                     st.write(doc["document"])
-
-
-
                     if doc.get("source") == "teacher":
-
                          st.success("👨‍🏫 관리자 정보")
-
-
-
                     else:
 
                          st.info("📝 설문 데이터")
@@ -161,29 +131,24 @@ if question:
 
                     if doc.get("pdf_path"):
 
+                        pdf_path = doc["pdf_path"]
 
+    # 이미 보여준 PDF라면 건너뜀
+                        if pdf_path not in shown_pdf:
 
-                        with open(doc["pdf_path"], "rb") as file:
+                            shown_pdf.add(pdf_path)
 
+                            if os.path.exists(pdf_path):
 
+                                with open(pdf_path, "rb") as file:
 
-                            st.download_button(
-
-
-
-                                "📄 PDF 다운로드",
-
-
-
-                                file,
-
-
-
-                                file_name=doc["pdf_path"].split("/")[-1]
-
-
-
-                            )
+                                    st.download_button(
+                                        label="📄 PDF 다운로드",
+                                        data=file.read(),
+                                        file_name=os.path.basename(pdf_path),
+                                        mime="application/pdf",
+                                        key=f"pdf_{os.path.basename(pdf_path)}"
+                                    )
 
 
 
